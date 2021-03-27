@@ -7,10 +7,14 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.google.android.gms.maps.CameraUpdateFactory
 
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
@@ -94,11 +98,22 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         map = googleMap
         getLocationAccess()
 
+        map.setOnMapClickListener(object :GoogleMap.OnMapClickListener {
+            override fun onMapClick(latlng : LatLng) {
+                // Clears the previously touched position
+                map.clear();
+                // Animating to the touched position
+                map.animateCamera(CameraUpdateFactory.newLatLng(latlng));
+
+                val location = LatLng(latlng.latitude,latlng.longitude)
+                map.addMarker(MarkerOptions().position(location).title("My Position"))
+            }
+        })
 
 //        val zoomLevel = 10f
 //        // Add a marker in Sydney and move the camera
 //        val sydney = LatLng(22.5726, 88.3639)
-//        mMap.addMarker(MarkerOptions().position(sydney).title("Marker in Kolkata")
+//        map.addMarker(MarkerOptions().position(sydney).title("Marker in Kolkata")
 //            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)))
 //        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, zoomLevel))
     }
