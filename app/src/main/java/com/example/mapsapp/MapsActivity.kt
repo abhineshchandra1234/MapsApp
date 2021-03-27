@@ -98,17 +98,23 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         map = googleMap
         getLocationAccess()
 
-        map.setOnMapClickListener(object :GoogleMap.OnMapClickListener {
-            override fun onMapClick(latlng : LatLng) {
-                // Clears the previously touched position
-                map.clear();
-                // Animating to the touched position
-                map.animateCamera(CameraUpdateFactory.newLatLng(latlng));
+//        map.setOnMapClickListener(object :GoogleMap.OnMapClickListener {
+//            override fun onMapClick(latlng : LatLng) {
+//                // Clears the previously touched position
+//                map.clear();
+//                // Animating to the touched position
+//                map.animateCamera(CameraUpdateFactory.newLatLng(latlng));
+//
+//                val location = LatLng(latlng.latitude,latlng.longitude)
+//                map.addMarker(MarkerOptions().position(location).title("My Position"))
+//            }
+//        })
 
-                val location = LatLng(latlng.latitude,latlng.longitude)
-                map.addMarker(MarkerOptions().position(location).title("My Position"))
-            }
-        })
+        map.setOnMapClickListener {
+            // Add marker to map. Once user click the map.
+            map.clear()
+            map.addMarker(it?.let { MarkerOptions().position(it).title("My Position") })
+        }
 
 //        val zoomLevel = 10f
 //        // Add a marker in Sydney and move the camera
