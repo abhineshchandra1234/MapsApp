@@ -2,34 +2,43 @@ package com.example.mapsapp
 
 import android.Manifest
 import android.content.pm.PackageManager
-import androidx.appcompat.app.AppCompatActivity
+import android.location.Location
+import android.location.LocationListener
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.gms.maps.CameraUpdateFactory
-
+import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.GoogleMap.OnMyLocationChangeListener
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
 
-class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
+
+class MapsActivity : AppCompatActivity(), OnMapReadyCallback, LocationListener {
 
     private lateinit var map: GoogleMap
     private val LOCATION_PERMISSION_REQUEST = 1
 
+
+
+
+    var lat = 1.0
+    var lon = 1.0
+
     private fun getLocationAccess() {
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
+                            this,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                            this,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                    ) != PackageManager.PERMISSION_GRANTED
             ) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
@@ -51,12 +60,12 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         if (requestCode == LOCATION_PERMISSION_REQUEST) {
             if (grantResults.contains(PackageManager.PERMISSION_GRANTED)) {
                 if (ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.ACCESS_COARSE_LOCATION
-                    ) != PackageManager.PERMISSION_GRANTED
+                                this,
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                                this,
+                                Manifest.permission.ACCESS_COARSE_LOCATION
+                        ) != PackageManager.PERMISSION_GRANTED
                 ) {
                     // TODO: Consider calling
                     //    ActivityCompat#requestPermissions
@@ -83,6 +92,8 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
         val mapFragment = supportFragmentManager
                 .findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
+
+
     }
 
     /**
@@ -97,6 +108,15 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         map = googleMap
         getLocationAccess()
+        val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+
+
+
+
+
+
+
+
 
 //        map.setOnMapClickListener(object :GoogleMap.OnMapClickListener {
 //            override fun onMapClick(latlng : LatLng) {
@@ -110,11 +130,25 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 //            }
 //        })
 
-        map.setOnMapClickListener {
-            // Add marker to map. Once user click the map.
-            map.clear()
-            map.addMarker(it?.let { MarkerOptions().position(it).title("My Position") })
-        }
+            map.setOnMapClickListener {
+                // Add marker to map. Once user click the map.
+                lat = it.latitude
+                lon = it.latitude
+
+
+                map.clear()
+                map.addMarker(it?.let { MarkerOptions().position(it).title("My Position") })
+//            map.addCircle(it?.let { CircleOptions().center(it).radius(10.0)
+//                    .strokeWidth(0f)
+//                    .fillColor(0x550000FF)})
+            }
+
+
+
+
+
+
+
 
 //        val zoomLevel = 10f
 //        // Add a marker in Sydney and move the camera
@@ -123,4 +157,16 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 //            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)))
 //        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, zoomLevel))
     }
+
+    override fun onLocationChanged(location: Location) {
+        Log.d("Main", "onLocationChanged: ${location.latitude} and longitude is ${location.longitude}")
+    }
+
+
+
 }
+
+
+
+
+
